@@ -1,5 +1,5 @@
 ---
-title: Early warning systems for cryptocurrency markets: Predicting ‘zombie’ assets using machine learning
+title: "Early warning systems for cryptocurrency markets: Predicting ‘zombie’ assets using machine learning"
 authors: Będowska-Sójka, B., Wójcik, P., Pele, D.T.
 year: 2025
 type: article
