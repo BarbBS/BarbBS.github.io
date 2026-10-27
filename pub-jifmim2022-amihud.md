@@ -1,5 +1,5 @@
 ---
-title: The asymmetry of the Amihud illiquidity measure on the European markets: The evidence from Extreme Value Theory
+title: "The asymmetry of the Amihud illiquidity measure on the European markets: The evidence from Extreme Value Theory"
 authors: Będowska-Sójka, B., Echaust, K., Just, M.
 year: 2022
 type: article

@@ -1,5 +1,5 @@
 ---
-title: Intraday stealth trading: Evidence from the Warsaw Stock Exchange
+title: "Intraday stealth trading: Evidence from the Warsaw Stock Exchange"
 authors: Będowska-Sójka, B.
 year: 2014
 type: article

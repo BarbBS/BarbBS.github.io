@@ -1,5 +1,5 @@
 ---
-title: FinTechs in Poland: Insights, trends and perspectives
+title: "FinTechs in Poland: Insights, trends and perspectives"
 authors: Kliber, A., Będowska-Sójka, B., Rutkowska, A., Świerczyńska, K. i in.
 year: 2020
 type: report

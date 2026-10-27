@@ -1,5 +1,5 @@
 ---
-title: When size matters: Volatility-to-liquidity transmission in cryptocurrency networks
+title: "When size matters: Volatility-to-liquidity transmission in cryptocurrency networks"
 authors: Będowska-Sójka, B., Mercik, A.R.
 year: 2026
 type: wp

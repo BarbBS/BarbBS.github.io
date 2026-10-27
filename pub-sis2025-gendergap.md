@@ -1,5 +1,5 @@
 ---
-title: Investigating gender gap in editorial boards of finance journals: A social network perspective
+title: "Investigating gender gap in editorial boards of finance journals: A social network perspective"
 authors: Tarantola, C., Będowska-Sójka, B., Mare, C., Paccagnini, A., Öztürkkal, B., Pisoni, G., Perri, R., Shala, A., Skaftadóttir, H.K.
 year: 2025
 type: chapter

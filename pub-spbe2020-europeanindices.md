@@ -1,5 +1,5 @@
 ---
-title: Liquidity of the European indices: The developed versus the emerging markets
+title: "Liquidity of the European indices: The developed versus the emerging markets"
 authors: Będowska-Sójka, B.
 year: 2020
 type: chapter

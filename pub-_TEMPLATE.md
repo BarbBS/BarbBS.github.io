@@ -1,5 +1,5 @@
 ---
-title: Title of the paper
+title: "Title of the paper: subtitle"
 authors: Surname, A., Będowska-Sójka, B.
 year: 2027
 type: article

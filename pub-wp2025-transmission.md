@@ -1,5 +1,5 @@
 ---
-title: Transmission dynamics in crypto markets: Comparing volatility and liquidity spillover networks
+title: "Transmission dynamics in crypto markets: Comparing volatility and liquidity spillover networks"
 authors: Będowska-Sójka, B.
 year: 2025
 type: wp

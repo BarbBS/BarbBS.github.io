@@ -1,5 +1,5 @@
 ---
-title: Unemployment rate forecasts: Evidence from the Baltic States
+title: "Unemployment rate forecasts: Evidence from the Baltic States"
 authors: Będowska-Sójka, B.
 year: 2015
 type: article

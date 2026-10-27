@@ -1,5 +1,5 @@
 ---
-title: Ethical artificial intelligence, fintech and data protection: A path forward for training in Europe
+title: "Ethical artificial intelligence, fintech and data protection: A path forward for training in Europe"
 authors: Moloney, M., Coita, I., Paschalidou, E.G., Svetlova, E., Mare, C., Stanca, L., Pisoni, G. i in. (w tym Będowska-Sójka, B.)
 year: 2024
 type: wp

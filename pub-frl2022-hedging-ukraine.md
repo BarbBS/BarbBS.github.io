@@ -1,5 +1,5 @@
 ---
-title: Hedging geopolitical risks with different asset classes: A focus on the Russian invasion of Ukraine
+title: "Hedging geopolitical risks with different asset classes: A focus on the Russian invasion of Ukraine"
 authors: Będowska-Sójka, B., Demir, E., Zaremba, A.
 year: 2022
 type: article

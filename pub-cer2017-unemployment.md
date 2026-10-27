@@ -1,5 +1,5 @@
 ---
-title: Unemployment rates forecasts: Unobserved component models versus SARIMA models in Central and Eastern European countries
+title: "Unemployment rates forecasts: Unobserved component models versus SARIMA models in Central and Eastern European countries"
 authors: Będowska-Sójka, B.
 year: 2017
 type: article

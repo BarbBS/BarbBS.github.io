@@ -1,5 +1,5 @@
 ---
-title: False safe haven assets: Evidence from the target volatility strategy based on recurrent neural network
+title: "False safe haven assets: Evidence from the target volatility strategy based on recurrent neural network"
 authors: Kaczmarek, T., Będowska-Sójka, B., Grobelny, P., Perez, K.
 year: 2022
 type: article

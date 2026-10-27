@@ -1,5 +1,5 @@
 ---
-title: Liquidity dynamics around jumps: The evidence from the Warsaw Stock Exchange
+title: "Liquidity dynamics around jumps: The evidence from the Warsaw Stock Exchange"
 authors: Będowska-Sójka, B.
 year: 2016
 type: article

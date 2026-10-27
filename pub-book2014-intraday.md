@@ -1,5 +1,5 @@
 ---
-title: Wpływ informacji na ceny instrumentów finansowych: analiza danych śróddziennych
+title: "Wpływ informacji na ceny instrumentów finansowych: analiza danych śróddziennych"
 authors: Będowska-Sójka, B.
 year: 2014
 type: book

@@ -1,5 +1,5 @@
 ---
-title: Commonality in liquidity indices: The emerging European stock markets
+title: "Commonality in liquidity indices: The emerging European stock markets"
 authors: Będowska-Sójka, B., Echaust, K.
 year: 2019
 type: article

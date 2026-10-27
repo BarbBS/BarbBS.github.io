@@ -1,5 +1,5 @@
 ---
-title: Editorial boards of finance journals: gender and social connectedness
+title: "Editorial boards of finance journals: gender and social connectedness"
 authors: Będowska-Sójka, B., Kabaklarli, E., Mare, C., Öztürkkal, B., Paccagnini, A. i in.
 year: 2024
 type: wp

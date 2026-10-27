@@ -1,5 +1,5 @@
 ---
-title: Idiosyncratic volatility, returns, and mispricing: No real anomaly in sight
+title: "Idiosyncratic volatility, returns, and mispricing: No real anomaly in sight"
 authors: Zaremba, A., Czapkiewicz, A., Będowska-Sójka, B.
 year: 2018
 type: article

@@ -1,5 +1,5 @@
 ---
-title: FinTech, regulation, and cybercrime: Opportunities arising from new technologies
+title: "FinTech, regulation, and cybercrime: Opportunities arising from new technologies"
 authors: Achim, M.V., Pisoni, G., Mare, C., Moloney, M., Korba, S., Molnár, B., Będowska-Sójka, B., Coita, I.
 year: 2023
 type: wp

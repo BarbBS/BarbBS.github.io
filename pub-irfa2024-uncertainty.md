@@ -1,5 +1,5 @@
 ---
-title: Uncertainty and cryptocurrency returns: A lesson from turbulent times
+title: "Uncertainty and cryptocurrency returns: A lesson from turbulent times"
 authors: Będowska-Sójka, B., Górka, J., Hemmings, D., Zaremba, A.
 year: 2024
 type: article

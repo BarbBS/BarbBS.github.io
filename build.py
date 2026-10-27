@@ -23,7 +23,9 @@ def read_md(f):
     for line in m.group(1).splitlines():
         if not line.strip() or line.lstrip().startswith("#"): continue
         if ":" not in line: sys.exit(f"BŁĄD w pliku {f.name}: linia bez dwukropka: {line!r}")
-        k, v = line.split(":", 1); meta[k.strip().lower()] = v.strip()
+        k, v = line.split(":", 1); v = v.strip()
+        if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'": v = v[1:-1]
+        meta[k.strip().lower()] = v
     paras = [re.sub(r"\s*\n\s*", " ", x).strip() for x in re.split(r"\n\s*\n", m.group(2).strip()) if x.strip()]
     return meta, paras
 

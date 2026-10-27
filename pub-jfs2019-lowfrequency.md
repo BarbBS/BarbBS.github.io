@@ -1,5 +1,5 @@
 ---
-title: The dynamics of low-frequency liquidity measures: The developed versus the emerging market
+title: "The dynamics of low-frequency liquidity measures: The developed versus the emerging market"
 authors: Będowska-Sójka, B.
 year: 2019
 type: article

@@ -1,5 +1,5 @@
 ---
-title: Polityka stabilnej dywidendy: modele tobitowe i probitowe
+title: "Polityka stabilnej dywidendy: modele tobitowe i probitowe"
 authors: Będowska-Sójka, B.
 year: 2007
 type: article
