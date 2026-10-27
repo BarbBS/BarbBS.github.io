@@ -14,4 +14,4 @@ website: https://barbbs.github.io
 google_site_verification: yis2MH62jGd7Zl9i-4KODl6TkSJf8UZBxgBVHOaX-CM
 ---
 
-Her research covers financial markets, financial econometrics, fintech, data analysis and the application of network science to financial data. Recent works focus on cryptocurrency and critical metal markets. She examines volatility and liquidity measures built from high-frequency data, the coherence of liquidity proxies and the dependencies between volatility and liquidity. Related strands cover the hedging and safe-haven properties of assets under geopolitical and energy shocks, and machine-learning methods in asset pricing.
+Barbara Będowska-Sójka focuses on cryptocurrency and critical metal markets. She examines volatility and liquidity measures built from high-frequency data, the coherence of liquidity proxies and the dependencies between volatility and liquidity. Related strands cover the hedging and safe-haven properties of assets under geopolitical and energy shocks, and machine-learning methods in asset pricing.
