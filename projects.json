@@ -1,0 +1,58 @@
+{
+ "OPUS13": {
+  "name": "NCN OPUS 13",
+  "number": "UMO-2017/25/B/HS4/01546",
+  "funder": "Narodowe Centrum Nauki",
+  "title": "[tytuł do uzupełnienia]",
+  "years": "2018–2021 (do potwierdzenia)",
+  "oa_policy": "umowa przed 2021 – polityka OA NCN nie obowiązuje"
+ },
+ "OPUS21": {
+  "name": "NCN OPUS 21",
+  "number": "UMO-2021/41/B/HS4/02443",
+  "funder": "Narodowe Centrum Nauki",
+  "title": "[tytuł do uzupełnienia]",
+  "years": "2022– (do potwierdzenia)",
+  "oa_policy": "umowa od 2021 – obowiązuje polityka OA NCN"
+ },
+ "OPUS22": {
+  "name": "NCN OPUS 22 (LAP z GAČR)",
+  "number": "UMO-2022/45/B/HS4/00864",
+  "funder": "Narodowe Centrum Nauki",
+  "title": "[tytuł do uzupełnienia]",
+  "years": "2023– (do potwierdzenia)",
+  "oa_policy": "umowa od 2021 – obowiązuje polityka OA NCN"
+ },
+ "COST": {
+  "name": "COST Action CA19130 FinAI",
+  "number": "CA19130",
+  "funder": "European Cooperation in Science and Technology",
+  "title": "Fintech and Artificial Intelligence in Finance – Towards a transparent financial industry",
+  "years": "2020–2024",
+  "oa_policy": "COST zachęca do OA"
+ },
+ "DIGITAL": {
+  "name": "MSCA Doctoral Network DIGITAL",
+  "number": "101119635",
+  "funder": "Komisja Europejska, Horizon Europe MSCA",
+  "title": "Digital Finance – Reaching New Frontiers",
+  "years": "2024–2027",
+  "oa_policy": "Horizon Europe: obowiązkowy natychmiastowy OA, AAM/VoR w repozytorium, CC BY"
+ },
+ "MINIATURA": {
+  "name": "NCN MINIATURA 3",
+  "number": "2019/03/X/HS4/01025",
+  "funder": "Narodowe Centrum Nauki",
+  "title": "[tytuł do uzupełnienia]",
+  "years": "2019–2020",
+  "oa_policy": "—"
+ },
+ "RID": {
+  "name": "Regionalna Inicjatywa Doskonałości (MNiSW)",
+  "number": "004/RID/2018/19",
+  "funder": "Ministerstwo Nauki i Szkolnictwa Wyższego",
+  "title": "program uczelniany UEP",
+  "years": "2019–2022",
+  "oa_policy": "—"
+ }
+}
