@@ -84,6 +84,32 @@ for f in files("pub-*.md"):
                      projects=projs, ssrn=m.get("preprint", ""), keywords=split(m.get("keywords")),
                      abstract=" ".join(abstract), _src=f))
 
+# --- wystąpienia konferencyjne
+PUB_IDS = {p["id"] for p in PUBS}
+TALKS = []
+for f in files("talk-*.md"):
+    if "TEMPLATE" in f.stem.upper(): continue
+    m, desc = read_md(f)
+    if not m.get("title"): sys.exit(f"BŁĄD w pliku {f.name}: brak tytułu (title)")
+    if not m.get("conference"): sys.exit(f"BŁĄD w pliku {f.name}: brak nazwy konferencji (conference)")
+    date = m.get("date", "")
+    if not re.fullmatch(r"\d{4}(-\d{2}(-\d{2})?)?", date): sys.exit(f"BŁĄD w pliku {f.name}: date w formacie RRRR-MM-DD, RRRR-MM albo RRRR")
+    pub = m.get("publication", "")
+    if pub and pub not in PUB_IDS: sys.exit(f"BŁĄD w pliku {f.name}: publication {pub!r} nie pasuje do żadnego pliku pub-*.md")
+    slides = m.get("slides", "")
+    src = files(pathlib.Path(slides).name) if slides else []
+    if slides and not src:
+        print(f"UWAGA: {f.name}: brak pliku {slides} w repozytorium – link do slajdów pominięty")
+    slides_src = src[0] if src else None
+    slides = slides_src.name if slides_src else ""
+    TALKS.append(dict(id=f.stem[5:], title=m["title"], conference=m["conference"], location=m.get("location", ""), date=date,
+                      url=m.get("url", ""), slides=slides, slides_src=slides_src, publication=pub, coauthors=m.get("coauthors", ""), description=" ".join(desc)))
+TALKS.sort(key=lambda t: t["date"], reverse=True)
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+def nice_date(d):
+    parts = d.split("-")
+    return f"{MONTHS[int(parts[1]) - 1]} {parts[0]}" if len(parts) >= 2 else parts[0]
+
 # Które wersje wolno pokazać publicznie jako pełny tekst
 FULLTEXT_OK = {"vor": "Published version (open access)", "vor_check": "Published version (open access)",
                "aam_elsevier": "Accepted manuscript", "aam_springer": "Accepted manuscript",
@@ -180,7 +206,8 @@ def make_sidebar(pubs, by_proj):
     return (f'<a class="who" href="{BASE}/">{e(CFG["name"])}</a><nav aria-label="Contents">'
             f'<p class="grp">Publications</p><ul class="toc">{pubs_li}'
             f'{li(f"{BASE}/#projects", "Research projects", len(projs))}</ul><ul class="sub">{sub}</ul>'
-            f'<ul class="toc">{li(f"{BASE}/#working-papers", "Working papers", cnt["working-papers"])}</ul>'
+            f'<ul class="toc">{li(f"{BASE}/#working-papers", "Working papers", cnt["working-papers"])}'
+            f'{li(f"{BASE}/#talks", "Conference talks", len(TALKS)) if TALKS else ""}</ul>'
             f'<ul class="ext">{ext}</ul></nav>')
 
 def pub_url(p): return f"{BASE}/{p['id']}.html"
@@ -196,6 +223,15 @@ def pub_item(p):
     vp = f", {p['volpages']}" if p["volpages"] else ""
     return f"""<div class="pub"><h3><a href="{pub_url(p)}">{e(p['title'])}</a></h3>
 <p>{e(p['authors'])} ({p['year']}). <em>{e(p['venue'])}</em>{e(vp)}.</p><p>{''.join(tags)}</p></div>"""
+
+def talk_item(t, show_paper=True):
+    tags = []
+    if t["slides"]: tags.append(f'<a class="tag oa" href="{BASE}/{e(t["slides"])}">Slides (PDF)</a>')
+    if t["url"]: tags.append(f'<a class="tag" href="{e(t["url"])}">Conference website</a>')
+    if show_paper and t["publication"]: tags.append(f'<a class="tag" href="{BASE}/{e(t["publication"])}.html">Related paper</a>')
+    where = ", ".join(x for x in [t["conference"], t["location"], nice_date(t["date"])] if x)
+    co = f'<p class="meta">With {e(t["coauthors"])}</p>' if t["coauthors"] else ""
+    return f"""<div class="pub"><h3>{e(t['title'])}</h3><p>{e(where)}</p>{co}{f'<p class="meta">{e(t["description"])}</p>' if t["description"] else ""}<p>{''.join(tags)}</p></div>"""
 
 def build_pub(p):
     pdf = pdf_path(p)
@@ -232,6 +268,7 @@ def build_pub(p):
 {f'<p class="meta">{e(notice(p))}</p>' if pdf and notice(p) else ''}
 {f'<p class="meta">Preprint: <a href="{e(p["ssrn"])}">{e(p["ssrn"])}</a></p>' if p['ssrn'] else ''}</div>
 {('<h2>Funding</h2><ul class="plain">' + ''.join(f'<li><a href="{proj_url(k)}">{e(PROJ[k]["name"])}</a>, {e(PROJ[k]["funder"])}, grant {e(PROJ[k]["number"])}</li>' for k in p['projects']) + '</ul>') if p['projects'] else ''}
+{('<h2>Presented at</h2>' + ''.join(talk_item(t, False) for t in TALKS if t['publication'] == p['id'])) if any(t['publication'] == p['id'] for t in TALKS) else ''}
 <h2>Cite</h2><pre style="white-space:pre-wrap;font-size:13px">{e(bibtex(p))}</pre>"""
     (OUT/f"{p['id']}.html").write_text(page(f"{p['title']} | {CFG['name']}", desc, body, f"{p['id']}.html", "\n".join(meta), ld), encoding="utf-8")
 
@@ -280,8 +317,11 @@ def main():
 <p class="meta">{' · '.join(f'<a href="{e(u)}">{n}</a>' for n, u in [("Google Scholar", CFG['google_scholar']), ("RePEc", CFG['repec']), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG['orcid'] else ""), ("University profile", CFG['university_profile'])] if u)}</p>
 <p class="meta" id="publications">{len(pubs)} publications · {n_oa} with free full text on this site</p>{pub_html}
 <h2 id="projects">Research projects</h2>{proj_html}
-{wp_html}"""
+{wp_html}
+{('<h2 id="talks">Conference talks</h2>' + ''.join(talk_item(t) for t in TALKS)) if TALKS else ''}"""
     ld = {"@context": "https://schema.org", "@graph": [person_ld(), {"@type": "ProfilePage", "@id": f"{BASE}/", "mainEntity": {"@id": f"{BASE}/#person"}, "dateModified": TODAY}]}
+    for t in TALKS:
+        if t["slides_src"]: shutil.copy(t["slides_src"], OUT/t["slides"])
     (OUT/"style.css").write_text(css().strip() + "\n", encoding="utf-8")
     (OUT/"index.html").write_text(page(f"{CFG['name']} — Publications and research projects", CFG["bio"][:155], body, "", jsonld=ld), encoding="utf-8")
     # BibTeX, sitemap, robots, llms.txt
@@ -301,6 +341,10 @@ def main():
             if p["type"] in ts:
                 extra = f" DOI: {p['doi']}." if p["doi"] else ""
                 llms.append(f"- [{p['title']}]({pub_url(p)}): {p['authors']} ({p['year']}), {p['venue']}.{extra}" + (f" {p['abstract']}" if p.get("abstract") else ""))
+    if TALKS:
+        llms += ["", "## Conference talks", ""]
+        for t in TALKS:
+            llms.append(f"- {t['title']}: {t['conference']}" + (f", {t['location']}" if t['location'] else "") + f", {nice_date(t['date'])}." + (f" Slides: {BASE}/{t['slides']}" if t['slides'] else "") + (f" Related paper: {BASE}/{t['publication']}.html" if t['publication'] else ""))
     (OUT/"llms.txt").write_text("\n".join(llms) + "\n", encoding="utf-8")
     print(f"OK: {len(pubs)} publikacji, {sum(1 for k in PROJ if by_proj[k])} projektów, {n_oa} PDF -> {OUT}")
 
