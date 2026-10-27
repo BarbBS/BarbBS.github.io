@@ -1,0 +1,17 @@
+name: Cleanup old files
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove old generated files
+        run: |
+          git rm -q --ignore-unmatch -- ./*.html ./*.css ./*.bib ./*.xml llms.txt robots.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git diff --cached --quiet || git commit -m "Remove old generated files"
+          git push
