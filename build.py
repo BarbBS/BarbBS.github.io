@@ -1,25 +1,92 @@
 #!/usr/bin/env python3
 """Buduje statyczną stronę z publikacjami (GitHub Pages).
-Dane: data/publications.json, data/projects.json, config.json.
-PDF-y: wrzuć plik do pdfs/<id>.pdf (np. pdfs/frl2024-dirtyclean.pdf) i uruchom ponownie.
-Wynik: katalog docs/ (GitHub Pages -> Settings -> Pages -> branch main, folder /docs).
+Dane: profile.md, project-*.md, pub-*.md (gdziekolwiek w repozytorium), PDF-y: <id>.pdf.
+Uruchamiany automatycznie przez GitHub Actions; wynik: katalog _site/.
 """
-import json, html, re, shutil, datetime, pathlib
+import json, html, re, shutil, datetime, pathlib, sys
 
 ROOT = pathlib.Path(__file__).parent
-CFG = json.loads((ROOT/"config.json").read_text(encoding="utf-8"))
-PUBS = json.loads((ROOT/"data/publications.json").read_text(encoding="utf-8"))
-PROJ = json.loads((ROOT/"data/projects.json").read_text(encoding="utf-8"))
-OUT = ROOT/"docs"
-BASE = CFG["base_url"].rstrip("/")
+OUT = ROOT/"_site"
 TODAY = datetime.date.today().isoformat()
 e = lambda s: html.escape(str(s or ""), quote=True)
+SKIP = {".git", "_site", ".github"}
+
+def files(pattern):
+    return sorted(f for f in ROOT.rglob(pattern) if not (set(f.relative_to(ROOT).parts) & SKIP))
+
+def read_md(f):
+    """Plik: '---', linie 'klucz: wartość', '---', potem tekst (abstrakt / opis)."""
+    t = f.read_text(encoding="utf-8").replace("\r\n", "\n").lstrip("\ufeff")
+    m = re.match(r"\s*---\s*\n(.*?)\n---\s*\n?(.*)$", t, re.S)
+    if not m: sys.exit(f"BŁĄD w pliku {f.name}: brak bloku '---' na początku")
+    meta = {}
+    for line in m.group(1).splitlines():
+        if not line.strip() or line.lstrip().startswith("#"): continue
+        if ":" not in line: sys.exit(f"BŁĄD w pliku {f.name}: linia bez dwukropka: {line!r}")
+        k, v = line.split(":", 1); meta[k.strip().lower()] = v.strip()
+    paras = [re.sub(r"\s*\n\s*", " ", x).strip() for x in re.split(r"\n\s*\n", m.group(2).strip()) if x.strip()]
+    return meta, paras
+
+split = lambda v: [x.strip() for x in (v or "").split(";") if x.strip()]
+
+# --- profil
+_pf = files("profile.md")
+if not _pf: sys.exit("BŁĄD: brak pliku profile.md")
+_m, _bio = read_md(_pf[0])
+CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "website", "google_site_verification"]}
+CFG["orcid"] = CFG["orcid"].replace("https://orcid.org/", "").strip("/")
+CFG["interests"] = split(_m.get("interests"))
+CFG["bio_long"] = _bio
+CFG["bio"] = _bio[0] if _bio else ""
+CFG["name_ascii"] = CFG["name"].translate(str.maketrans("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ", "acelnoszzACELNOSZZ"))
+BASE = (CFG["website"] or "https://barbbs.github.io").rstrip("/")
+
+# --- projekty
+PROJ = {}
+for f in files("project-*.md"):
+    m, d = read_md(f)
+    code = m.get("code") or f.stem.replace("project-", "").upper()
+    PROJ[code] = {"name": m.get("name", code), "number": m.get("number", ""), "funder": m.get("funder", ""),
+                  "title": m.get("title") or f"[{m.get('name', code)}]", "years": m.get("years", ""), "description": d, "order": float(m.get("order") or 99)}
+
+PROJ = dict(sorted(PROJ.items(), key=lambda kv: (kv[1]["order"], kv[0])))
+
+# --- publikacje
+TYPES = {"article", "chapter", "proceedings", "book", "wp", "report"}
+VERSIONS = {"published", "accepted", "preprint", "none"}
+PUBS = []
+for f in files("pub-*.md"):
+    if "TEMPLATE" in f.stem.upper(): continue
+    m, abstract = read_md(f)
+    pid = f.stem[4:]
+    if not m.get("title"): sys.exit(f"BŁĄD w pliku {f.name}: brak tytułu (title)")
+    try: year = int(m.get("year", ""))
+    except ValueError: sys.exit(f"BŁĄD w pliku {f.name}: rok (year) musi być liczbą")
+    typ = m.get("type", "article").lower()
+    if typ not in TYPES: sys.exit(f"BŁĄD w pliku {f.name}: type musi być jednym z: {', '.join(sorted(TYPES))}")
+    v = m.get("version", "none").lower() or "none"
+    if v not in VERSIONS: sys.exit(f"BŁĄD w pliku {f.name}: version musi być jednym z: {', '.join(sorted(VERSIONS))}")
+    projs = [x.upper() for x in split(m.get("projects"))]
+    for x in projs:
+        if x not in PROJ: sys.exit(f"BŁĄD w pliku {f.name}: nieznany projekt {x!r}; dostępne: {', '.join(PROJ)}")
+    doi = m.get("doi", "").replace("https://doi.org/", "")
+    if v == "published": share = "vor"
+    elif v == "preprint": share = "own"
+    elif v == "accepted":
+        share = ("aam_elsevier" if doi.startswith("10.1016/") else
+                 ("aam_springer_ch" if typ in ("chapter", "proceedings") else "aam_springer") if doi.startswith(("10.1007/", "10.1057/")) else
+                 "aam_tf" if doi.startswith("10.1080/") else "aam_other")
+    else: share = "none"
+    PUBS.append(dict(id=pid, year=year, title=m["title"], authors=m.get("authors", ""), venue=m.get("venue", ""),
+                     volpages=m.get("volume_pages", ""), doi=doi, type=typ, share=share, license=m.get("license", ""),
+                     projects=projs, ssrn=m.get("preprint", ""), keywords=split(m.get("keywords")),
+                     abstract=" ".join(abstract), _src=f))
 
 # Które wersje wolno pokazać publicznie jako pełny tekst
 FULLTEXT_OK = {"vor": "Published version (open access)", "vor_check": "Published version (open access)",
                "aam_elsevier": "Accepted manuscript", "aam_springer": "Accepted manuscript",
                "aam_springer_ch": "Accepted manuscript", "aam_tf": "Accepted manuscript",
-               "own": "Working paper"}
+               "aam_other": "Accepted manuscript", "own": "Working paper"}
 TYPE_LABEL = {"article": "Journal article", "chapter": "Book chapter", "proceedings": "Conference paper",
               "book": "Book", "wp": "Working paper", "report": "Report"}
 SCHEMA_TYPE = {"article": "ScholarlyArticle", "chapter": "Chapter", "proceedings": "ScholarlyArticle",
@@ -35,11 +102,14 @@ def notice(p):
         return f"This is an accepted manuscript version, subject to Springer Nature's AM terms of use. It is not the Version of Record. The Version of Record is available online at {doi}."
     if s == "aam_tf":
         return f"This is an Accepted Manuscript of an article published by Taylor & Francis in {p['venue']} ({p['year']}), available at {doi}."
+    if s == "aam_other":
+        return f"This is the accepted manuscript of an article published in {p['venue']} ({p['year']}). The published version is available at {doi}."
     return ""
 
 def pdf_path(p):
-    f = ROOT/"pdfs"/f"{p['id']}.pdf"
-    return f if f.exists() and p["share"] in FULLTEXT_OK else None
+    if p["share"] not in FULLTEXT_OK: return None
+    hits = files(f"{p['id']}.pdf")
+    return hits[0] if hits else None
 
 def authors_list(p):
     a = re.sub(r"\s+i in\..*$|\(.*?\)", "", p["authors"]).strip().rstrip(",")
@@ -90,7 +160,7 @@ def person_ld():
                         f"https://orcid.org/{CFG['orcid']}" if CFG.get("orcid") else ""] if u]
     return {"@type": "Person", "@id": f"{BASE}/#person", "name": CFG["name"], "alternateName": CFG["name_ascii"],
             "jobTitle": CFG["job_title"], "worksFor": {"@type": "CollegeOrUniversity", "name": CFG["affiliation"]},
-            "knowsAbout": CFG["interests"], "sameAs": same, "url": f"{BASE}/"}
+            "knowsAbout": CFG["interests"], "description": CFG["bio"], "sameAs": same, "url": f"{BASE}/"}
 
 SECTIONS = [("articles", "Journal articles", ["article"]), ("chapters", "Book chapters and conference papers", ["chapter", "proceedings"]),
             ("books", "Books and reports", ["book", "report"]), ("working-papers", "Working papers and preprints", ["wp"])]
@@ -173,11 +243,12 @@ def bibtex(p):
 
 def build_project(k, pr, pubs):
     ld = {"@context": "https://schema.org", "@type": "ResearchProject", "@id": proj_url(k), "name": pr["name"],
-          "alternateName": pr["title"], "identifier": pr["number"], "funder": {"@type": "Organization", "name": pr["funder"]},
+          **({"alternateName": pr["title"]} if not pr["title"].startswith("[") else {}), "identifier": pr["number"], "funder": {"@type": "Organization", "name": pr["funder"]},
           "member": {"@id": f"{BASE}/#person"}}
     title = pr["title"] if not pr["title"].startswith("[") else pr["name"]
     body = f"""<p class="muted">Research project · {e(pr['funder'])}</p><h1>{e(title)}</h1>
-<p>{e(pr['name'])} · grant no. {e(pr['number'])} · {e(pr['years'])}</p>
+<p>{e(' · '.join(x for x in [pr['name'], 'grant no. ' + pr['number'] if pr['number'] else '', pr['years']] if x))}</p>
+{''.join(f'<p>{e(x)}</p>' for x in pr.get('description') or [])}
 <h2>Publications from this project ({len(pubs)})</h2>{''.join(pub_item(p) for p in pubs)}"""
     (OUT/f"project-{k.lower()}.html").write_text(page(f"{title} | {CFG['name']}", f"Publications from the research project {pr['name']} ({pr['number']}).", body, f"project-{k.lower()}.html", jsonld=ld), encoding="utf-8")
 
@@ -201,8 +272,9 @@ def main():
     pub_html = "".join(sec(*x) for x in SECTIONS if x[0] != "working-papers")
     wp_html = sec(*SECTIONS[3])
     n_oa = sum(1 for p in pubs if pdf_path(p))
-    body = f"""<h1>{e(CFG['name'])}</h1><p class="muted">{e(CFG['job_title'])} · {e(CFG['department'])}, {e(CFG['affiliation'])} · {e(CFG['city'])}</p>
-<p>{e(CFG['bio'])}</p><p class="meta">Research interests: {e(', '.join(CFG['interests']))}</p>
+    body = f"""<h1>{e(CFG['name'])}</h1><p class="muted">{e(CFG['job_title'])} · {e(CFG['affiliation'])} · {e(CFG['city'])}</p>
+{chr(10).join(f'<p>{e(x)}</p>' for x in CFG.get('bio_long') or [CFG['bio']])}
+<p class="meta">Research interests: {e(', '.join(CFG['interests']))}</p>
 <p class="meta">{' · '.join(f'<a href="{e(u)}">{n}</a>' for n, u in [("Google Scholar", CFG['google_scholar']), ("RePEc", CFG['repec']), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG['orcid'] else ""), ("University profile", CFG['university_profile'])] if u)}</p>
 <p class="meta" id="publications">{len(pubs)} publications · {n_oa} with free full text on this site</p>{pub_html}
 <h2 id="projects">Research projects</h2>{proj_html}

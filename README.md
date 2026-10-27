@@ -1,34 +1,64 @@
-# Strona z publikacjami – instrukcja
+# Strona z publikacjami – jak ją edytować
 
-## Struktura
-- `config.json` – dane osobowe, adres strony (`base_url`), ORCID, linki profili.
-- `data/build_data.py` – lista prac (jedno miejsce prawdy). Po zmianie: `python3 data/build_data.py`.
-  Pola do uzupełniania: `abstract`, `keywords` (w `publications.json` lub w skrypcie), przydział do projektów.
-- `pdfs/` – tu wrzucasz pliki PDF o nazwie `<id>.pdf` (id z kolumny pierwszej w `build_data.py`).
-  Generator doda PDF tylko dla prac, dla których prawo udostępnienia na to pozwala.
-- `build.py` – generuje stronę do katalogu `docs/`.
+Strona https://barbbs.github.io buduje się sama. Po każdej zmianie zapisanej w tym repozytorium GitHub uruchamia `build.py` i w 1–2 minuty publikuje nową wersję (zakładka **Actions** → zielony ptaszek).
 
-## Uruchomienie
-```
-python3 data/build_data.py
-python3 build.py
-```
+Edytujesz tylko trzy rodzaje plików. `build.py` i `.github/workflows/build.yml` zostaw bez zmian.
 
-## Wdrożenie na GitHub Pages
-1. Utwórz repozytorium `USERNAME.github.io` (adres strony: https://USERNAME.github.io).
-2. W `config.json` ustaw `base_url` na ten adres (bez ukośnika na końcu), uzupełnij ORCID.
-3. Uruchom `build.py` i wgraj do repozytorium wszystkie pliki z katalogu `docs/` (bez samego folderu; strona jest płaska, bez podfolderów).
-4. Settings → Pages → Source: branch `main`, folder `/ (root)`.
-5. Google Search Console: dodaj stronę, zgłoś `sitemap.xml`. Bing Webmaster Tools: to samo.
-6. Google Scholar indeksuje strony prac sam (znaczniki `citation_*`); zwykle trwa to kilka tygodni.
+| Plik | Co zawiera |
+| --- | --- |
+| `profile.md` | opis Twojej osoby, stanowisko, linki, zainteresowania |
+| `project-*.md` | jeden plik = jeden projekt (pakiet projektowy) |
+| `pub-*.md` | jeden plik = jedna publikacja |
+| `<id>.pdf` | pełny tekst pracy (AAM lub PDF wydawcy) |
 
-## Co zawiera strona pod kątem widoczności
-- osobna strona dla każdej pracy z meta tagami Highwire (`citation_title`, `citation_author`, `citation_pdf_url`, `citation_doi`) – standard Google Scholar,
-- dane strukturalne schema.org (JSON-LD): `Person`, `ScholarlyArticle`, `ResearchProject`, `Grant`,
-- `sitemap.xml`, `robots.txt` (wpuszcza też roboty AI: GPTBot, ClaudeBot, PerplexityBot, Google-Extended),
-- `llms.txt` – zwięzły opis i lista prac w formacie czytelnym dla modeli językowych,
-- `publications.bib` – BibTeX wszystkich prac,
-- strony pakietów projektowych z listą prac i numerem grantu.
+## Jak edytować plik w przeglądarce
 
-## Noty przy AAM
-Generator wstawia na stronie pracy notę wymaganą przez wydawcę. Tę samą notę umieść na pierwszej stronie pliku PDF z AAM (Elsevier: licencja CC BY-NC-ND 4.0 + DOI; Springer: „Version of Record available at…”; T&F: „Accepted Manuscript of an article published by Taylor & Francis…”).
+1. Kliknij plik, potem ikonę ołówka (**Edit this file**).
+2. Zmień tekst.
+3. **Commit changes…** → **Commit changes**.
+
+Budowa każdego pliku `.md` jest taka sama: między dwiema liniami `---` stoją pola `nazwa: wartość`, a pod nimi zwykły tekst (opis lub abstrakt). Akapity oddzielasz pustą linią. Kilka wartości w jednym polu oddzielasz średnikiem.
+
+## Opis osoby – `profile.md`
+
+Pola na górze: stanowisko (`job_title`), afiliacja, linki, `interests` (rozdzielone `;`). Pod drugą linią `---` jest opis; pierwszy akapit trafia też do opisu strony w Google i do `llms.txt`, więc powinien sam w sobie mówić, kim jesteś.
+
+## Nowa publikacja
+
+1. Otwórz `pub-_TEMPLATE.md` i skopiuj jego treść.
+2. **Add file → Create new file**. Nazwij plik `pub-<id>.md`, np. `pub-irfa2027-merge.md`. `<id>` to krótka nazwa bez spacji i polskich znaków; staje się adresem strony pracy (`barbbs.github.io/irfa2027-merge.html`).
+3. Wklej szablon i uzupełnij pola:
+
+| Pole | Wartości |
+| --- | --- |
+| `title` | tytuł |
+| `authors` | `Nazwisko, I., Nazwisko, I.` – w kolejności z artykułu |
+| `year` | rok (liczba) |
+| `type` | `article`, `chapter`, `proceedings`, `book`, `wp` (working paper), `report` |
+| `venue` | czasopismo / książka / seria |
+| `volume_pages` | np. `97, 103809` |
+| `doi` | sam DOI, np. `10.1016/j.irfa.2024.103809` |
+| `version` | `published` (PDF wydawcy, tylko artykuły OA), `accepted` (AAM), `preprint` (working paper), `none` (bez pełnego tekstu) |
+| `license` | tylko dla OA, np. `CC BY 4.0` |
+| `projects` | kody projektów rozdzielone `;`, np. `OPUS21; COST` – kod to pole `code` z pliku `project-*.md` |
+| `preprint` | link do SSRN itp. (opcjonalnie) |
+| `keywords` | słowa kluczowe rozdzielone `;` |
+
+4. Pod drugą linią `---` wklej abstrakt.
+5. **Commit changes**.
+
+Working paper, który ukazał się w czasopiśmie: zmień w jego pliku `type`, `venue`, `doi` i `version`; nazwy pliku nie zmieniaj, żeby adres strony został ten sam.
+
+## PDF
+
+**Add file → Upload files**, nazwa pliku = `<id>.pdf` (np. `irfa2027-merge.pdf`). PDF pojawi się na stronie tylko gdy `version` w pliku pracy to `published`, `accepted` albo `preprint`. Przy `accepted` strona sama dodaje notę wymaganą przez wydawcę (Elsevier, Springer, Taylor & Francis – rozpoznawane po DOI). Tę samą notę umieść na pierwszej stronie PDF.
+
+Zasady: Elsevier – AAM od razu, licencja CC BY-NC-ND; Springer/Palgrave – AAM od razu (rozdziały po 12 mies.); Taylor & Francis – AAM po publikacji; PDF wydawcy tylko przy otwartym dostępie.
+
+## Projekt
+
+Plik `project-<kod>.md`: `code` (krótki kod używany w publikacjach), `order` (kolejność na stronie), `name`, `number`, `funder`, `title`, `years`; pod `---` opcjonalny opis projektu. Nowy projekt: skopiuj istniejący plik i zmień pola.
+
+## Gdy coś pójdzie nie tak
+
+Jeśli w **Actions** pojawi się czerwony krzyżyk, kliknij go, potem **build** → krok **Build site**. Komunikat zaczyna się od `BŁĄD w pliku …` i mówi, co poprawić (np. rok nie jest liczbą, nieznany kod projektu). Do czasu poprawki działa poprzednia wersja strony. Każdą zmianę można cofnąć w historii pliku (**History**).
