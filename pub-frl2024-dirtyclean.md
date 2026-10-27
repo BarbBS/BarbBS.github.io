@@ -10,7 +10,8 @@ version: accepted
 license: 
 projects: OPUS21; COST
 preprint: https://doi.org/10.2139/ssrn.4663482
-keywords: 
+keywords: Clean cryptocurrencies; Dirty cryptocurrencies; Environmental attention; Brent; Clean energy;
 ---
 
+This paper examines the environmental awareness of cryptocurrency investors. We study cryptocurrencies of different consensus protocols, categorised as clean and dirty. Within the non-linear autoregressive distributed lag model (NARDL), we verify whether short- or long-run dependency exists between cryptos’ prices or volatility and the Index of Cryptocurrency Environmental Attention, ICEA. We find that the volatilities of cryptocurrencies react stronger to the changes in ICEA than the prices do and that the former respond more to the decrease of the index than to its increase. The reaction is more pronounced for dirty cryptocurrencies.
 
