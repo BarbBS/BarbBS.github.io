@@ -89,6 +89,13 @@
 - [Financial Engineering: Methods and Cases (rozdział)](https://barbbs.github.io/book2019-fineng.html): Kliber, P. (red.); Będowska-Sójka, B. (współautorka) (2019), Wydawnictwo Uniwersytetu Ekonomicznego w Poznaniu.
 - [Liquidity on the capital market with asymmetric information](https://barbbs.github.io/spbe2019-asymmetric.html): Będowska-Sójka, B., Garsztka, P. (2019), Effective Investments on Capital Markets (Springer Proceedings in Business and Economics). DOI: 10.1007/978-3-030-21274-2_26.
 
+## Books and reports
+
+- [FinTechs in Poland: Insights, trends and perspectives](https://barbbs.github.io/report2020-fintechs.html): Kliber, A., Będowska-Sójka, B., Rutkowska, A., Świerczyńska, K. i in. (2020), QuantFin.pl (raport).
+- [Posiedzenie Naukowej Rady Statystycznej — październik 2016 r.](https://barbbs.github.io/ws2017-rada-pazdziernik.html): Będowska-Sójka, B. (2017), Wiadomości Statystyczne.
+- [Posiedzenie Naukowej Rady Statystycznej — luty 2016 r.](https://barbbs.github.io/ws2016-rada-luty.html): Będowska-Sójka, B. (2016), Wiadomości Statystyczne.
+- [Wpływ informacji na ceny instrumentów finansowych: analiza danych śróddziennych](https://barbbs.github.io/book2014-intraday.html): Będowska-Sójka, B. (2014), Wydawnictwo Uniwersytetu Ekonomicznego w Poznaniu.
+
 ## Working papers and preprints
 
 - [When markets never sleep: Intraday liquidity patterns and macroeconomic announcement effects in cryptocurrency trading](https://barbbs.github.io/wp2026-neversleep.html): Mercik, A.R., Będowska-Sójka, B. (2026), SSRN Working Paper. DOI: 10.2139/ssrn.7434697.
@@ -102,10 +109,3 @@
 - [Ethical artificial intelligence, fintech and data protection: A path forward for training in Europe](https://barbbs.github.io/wp2024-ethicalai.html): Moloney, M., Coita, I., Paschalidou, E.G., Svetlova, E., Mare, C., Stanca, L., Pisoni, G. i in. (w tym Będowska-Sójka, B.) (2024), SSRN Working Paper. DOI: 10.2139/ssrn.4885037.
 - [FinTech, regulation, and cybercrime: Opportunities arising from new technologies](https://barbbs.github.io/wp2023-fintechcybercrime.html): Achim, M.V., Pisoni, G., Mare, C., Moloney, M., Korba, S., Molnár, B., Będowska-Sójka, B., Coita, I. (2023), SSRN Working Paper. DOI: 10.2139/ssrn.4620106.
 - [Volatility forecasts based on data sampled at different frequencies](https://barbbs.github.io/wp2012-volforecasts.html): Będowska-Sójka, B. (2012), Advanced Risk & Portfolio Management Paper (SSRN). DOI: 10.2139/ssrn.2274710.
-
-## Books and reports
-
-- [FinTechs in Poland: Insights, trends and perspectives](https://barbbs.github.io/report2020-fintechs.html): Kliber, A., Będowska-Sójka, B., Rutkowska, A., Świerczyńska, K. i in. (2020), QuantFin.pl (raport).
-- [Posiedzenie Naukowej Rady Statystycznej — październik 2016 r.](https://barbbs.github.io/ws2017-rada-pazdziernik.html): Będowska-Sójka, B. (2017), Wiadomości Statystyczne.
-- [Posiedzenie Naukowej Rady Statystycznej — luty 2016 r.](https://barbbs.github.io/ws2016-rada-luty.html): Będowska-Sójka, B. (2016), Wiadomości Statystyczne.
-- [Wpływ informacji na ceny instrumentów finansowych: analiza danych śróddziennych](https://barbbs.github.io/book2014-intraday.html): Będowska-Sójka, B. (2014), Wydawnictwo Uniwersytetu Ekonomicznego w Poznaniu.
