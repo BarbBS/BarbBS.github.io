@@ -1,9 +1,9 @@
 # Barbara Będowska-Sójka
 
-> Barbara Będowska-Sójka is a professor at the Department of Econometrics, Poznań University of Economics and Business (Poland). She studies market liquidity, volatility and risk in equity, commodity and cryptocurrency markets, using financial econometrics, machine learning and network methods.
+> Barbara Będowska-Sójka is a full professor and head of the Department of Econometrics at Poznań University of Economics and Business, Poland. She works on financial markets, financial econometrics, fintech and network science applied to financial data.
 
 - Affiliation: Department of Econometrics, Poznań University of Economics and Business, Poznań, Poland
-- Research interests: financial econometrics, market liquidity, volatility, cryptocurrency markets, time series analysis, risk management, portfolio management, machine learning in finance, network analysis
+- Research interests: financial markets, financial econometrics, cryptocurrency markets, volatility, liquidity, high-frequency data, fintech, network science, time series modelling, data analysis, portfolio management
 - Google Scholar: https://scholar.google.com/citations?user=noyoyCYAAAAJ
 
 ## Research projects
