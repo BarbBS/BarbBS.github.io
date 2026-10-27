@@ -9,7 +9,7 @@ orcid: 0000-0001-5193-8304
 google_scholar: https://scholar.google.com/citations?user=noyoyCYAAAAJ
 repec: https://ideas.repec.org/e/pbe727.html
 university_profile: https://ue.poznan.pl/osoby/prof-dr-hab-barbara-bedowska-sojka/
-interests: financial markets; financial econometrics; cryptocurrency markets; volatility; liquidity; high-frequency data; fintech; network science; time series modelling; data analysis; portfolio management
+interests: financial econometrics; financial markets; cryptocurrency markets; critical metal markets; liquidity; volatility; high-frequency data; hedging and safe-haven assets; machine learning in finance; network science; bank, fintech; time series modelling
 website: https://barbbs.github.io
 google_site_verification: yis2MH62jGd7Zl9i-4KODl6TkSJf8UZBxgBVHOaX-CM
 ---
