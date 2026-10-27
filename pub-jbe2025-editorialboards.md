@@ -10,7 +10,8 @@ version: accepted
 license: 
 projects: COST
 preprint: 
-keywords: 
+keywords: female editors, networks, centrality measures, geographic concentration;
 ---
 
+We investigate gender disparities and network linkages among editors of Finance journals at the end of 2022. The role of journal editors in shaping academic disciplines is crucial, yet gender imbalances and the geographic concentration of editors remain poorly understood. Ethical considerations arise when examining the representation of women on editorial boards, as these imbalances can impact academic equity and the diversity of perspectives. We examine the gender composition of editorial boards and uncover the network structures among editors, seeking to shed light on the concentration of editorial power and its implications for diversity and inclusion. Our findings reveal that women account for an average of 20% of all editors, with notable variations across countries. Additionally, editorial affiliations are heavily concentrated in the United States and the United Kingdom. Through typological metrics, we identify highly connected editors with significant board memberships. While gender ratios remain consistent in substructures involving highly central editors or those serving on multiple boards, men consistently outnumber women.
 
