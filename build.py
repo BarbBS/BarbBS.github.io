@@ -73,6 +73,9 @@ for f in files("pub-*.md"):
     if typ not in TYPES: sys.exit(f"BŁĄD w pliku {f.name}: type musi być jednym z: {', '.join(sorted(TYPES))}")
     v = m.get("version", "none").lower() or "none"
     if v not in VERSIONS: sys.exit(f"BŁĄD w pliku {f.name}: version musi być jednym z: {', '.join(sorted(VERSIONS))}")
+    pdate = m.get("date", "")
+    if pdate and not re.fullmatch(r"\d{4}(-\d{2}(-\d{2})?)?", pdate): sys.exit(f"BŁĄD w pliku {f.name}: date w formacie RRRR-MM-DD albo RRRR-MM")
+    if pdate and int(pdate[:4]) != year: sys.exit(f"BŁĄD w pliku {f.name}: rok w date ({pdate[:4]}) różni się od year ({year})")
     projs = [x.upper() for x in split(m.get("projects"))]
     for x in projs:
         if x not in PROJ: sys.exit(f"BŁĄD w pliku {f.name}: nieznany projekt {x!r}; dostępne: {', '.join(PROJ)}")
@@ -87,7 +90,7 @@ for f in files("pub-*.md"):
     PUBS.append(dict(id=pid, year=year, title=m["title"], authors=m.get("authors", ""), venue=m.get("venue", ""),
                      volpages=m.get("volume_pages", ""), doi=doi, type=typ, share=share, license=m.get("license", ""),
                      projects=projs, ssrn=m.get("preprint", ""), keywords=split(m.get("keywords")),
-                     abstract=" ".join(abstract), _src=f))
+                     abstract=" ".join(abstract), sortkey=pdate or f"{year}-00", _src=f))
 
 # --- wystąpienia konferencyjne
 PUB_IDS = {p["id"] for p in PUBS}
@@ -135,6 +138,7 @@ for f in files("topic-*.md"):
     TOPICS.append(dict(id=f.stem[6:], title=m["title"], short=m.get("short") or m["title"], summary=m.get("summary", ""),
                        order=float(m.get("order") or 99), papers=papers, talks=talks, links=links, body=body))
 TOPICS.sort(key=lambda t: (t["order"], t["title"]))
+def _neg(k): return [-ord(c) for c in k]
 def topic_url(t): return f"{BASE}/topic-{t['id']}.html"
 def plural(n, w): return f"{n} {w}" + ("" if n == 1 else "s")
 def n_items(t):
@@ -338,7 +342,7 @@ def main():
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir()
     global SIDEBAR
-    pubs = sorted(PUBS, key=lambda p: (-p["year"], p["title"]))
+    pubs = sorted(PUBS, key=lambda p: (_neg(p["sortkey"]), p["title"]))
     by_proj = {k: [p for p in pubs if k in p["projects"]] for k in PROJ}
     SIDEBAR = make_sidebar(pubs, by_proj)
     for p in pubs: build_pub(p)
@@ -352,7 +356,7 @@ def main():
     pub_by_id = {p["id"]: p for p in pubs}
     talk_by_id = {t["id"]: t for t in TALKS}
     for tp in TOPICS:
-        tp_pubs = sorted((pub_by_id[x] for x in tp["papers"]), key=lambda p: (-p["year"], p["title"]))
+        tp_pubs = sorted((pub_by_id[x] for x in tp["papers"]), key=lambda p: (_neg(p["sortkey"]), p["title"]))
         tp_talks = [talk_by_id[x] for x in tp["talks"]] + [t for t in TALKS if t["publication"] in tp["papers"] and t["id"] not in tp["talks"]]
         tp_talks.sort(key=lambda t: t["date"], reverse=True)
         def para(x):
