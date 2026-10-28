@@ -3,7 +3,7 @@ title: Critical metals and the energy transition
 short: Critical metals
 order: 4
 summary: Financialization, speculative bubbles and links with energy markets in lithium, cobalt, copper and nickel – the metals of the green transition.
-papers: resourpol2022-lithium
+papers: iaj2026-financialisation; resourpol2022-lithium
 talks: 2026-07-ecomod; 2026-05-wrofin-bubbles; 2026-01-safa; 2025-09-mfc-metals
 links:
 ---

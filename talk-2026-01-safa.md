@@ -5,7 +5,7 @@ location: Cape Town, South Africa
 date: 2026-01-13
 url: 
 slides: 
-publication: 
+publication: iaj2026-financialisation
 coauthors: Michał Kasperek
 ---
 

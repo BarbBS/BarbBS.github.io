@@ -5,7 +5,7 @@ location: Warsaw, Poland
 date: 2025-09-07
 url: 
 slides: 
-publication: 
+publication: iaj2026-financialisation
 coauthors: Michał Kasperek
 ---
 
