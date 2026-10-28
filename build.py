@@ -35,12 +35,16 @@ split = lambda v: [x.strip() for x in (v or "").split(";") if x.strip()]
 _pf = files("profile.md")
 if not _pf: sys.exit("BŁĄD: brak pliku profile.md")
 _m, _bio = read_md(_pf[0])
-CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "website", "google_site_verification", "indexnow_key"]}
+CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "ssrn", "researchgate", "linkedin", "website", "google_site_verification", "indexnow_key"]}
 CFG["orcid"] = CFG["orcid"].replace("https://orcid.org/", "").strip("/")
 CFG["interests"] = split(_m.get("interests"))
 CFG["bio_long"] = _bio
 CFG["bio"] = _bio[0] if _bio else ""
 CFG["name_ascii"] = CFG["name"].translate(str.maketrans("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ", "acelnoszzACELNOSZZ"))
+def profile_links():
+    return [(n, u) for n, u in [("Google Scholar", CFG["google_scholar"]), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG["orcid"] else ""),
+            ("RePEc", CFG["repec"]), ("SSRN", CFG["ssrn"]), ("ResearchGate", CFG["researchgate"]), ("LinkedIn", CFG["linkedin"]),
+            ("University profile", CFG["university_profile"])] if u]
 BASE = (CFG["website"] or "https://barbbs.github.io").rstrip("/")
 
 # --- projekty
@@ -216,8 +220,7 @@ def page(title, desc, body, path, head_extra="", jsonld=None):
 <footer>{e(CFG['name'])} · {e(CFG['affiliation'])} · Last updated {TODAY}</footer></body></html>"""
 
 def person_ld():
-    same = [u for u in [CFG.get("google_scholar"), CFG.get("repec"), CFG.get("university_profile"),
-                        f"https://orcid.org/{CFG['orcid']}" if CFG.get("orcid") else ""] if u]
+    same = [u for _, u in profile_links()]
     return {"@type": "Person", "@id": f"{BASE}/#person", "name": CFG["name"], "alternateName": CFG["name_ascii"],
             "jobTitle": CFG["job_title"], "worksFor": {"@type": "CollegeOrUniversity", "name": CFG["affiliation"]},
             "knowsAbout": CFG["interests"], "description": CFG["bio"], "sameAs": same, "url": f"{BASE}/"}
@@ -233,7 +236,7 @@ def make_sidebar(pubs, by_proj):
     pubs_li = "".join(li(f"{BASE}/#{sid}", short[sid], cnt[sid]) for sid in ("articles", "chapters", "books") if cnt[sid])
     projs = [(k, pr) for k, pr in PROJ.items() if by_proj[k]]
     sub = "".join(li(proj_url(k), pr["name"].replace("NCN ", "NCN ").replace("COST Action CA19130 FinAI", "COST FinAI").replace("MSCA Doctoral Network DIGITAL", "MSCA DIGITAL").replace("Regionalna Inicjatywa Doskonałości (MNiSW)", "RID (MNiSW)"), len(by_proj[k])) for k, pr in projs)
-    links = [("Google Scholar", CFG["google_scholar"]), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG["orcid"] else ""), ("RePEc", CFG["repec"]), ("University profile", CFG["university_profile"]), ("BibTeX", f"{BASE}/publications.bib")]
+    links = profile_links() + [("BibTeX", f"{BASE}/publications.bib")]
     ext = "".join(li(e(u), n) for n, u in links if u)
     topics_li = "".join(li(topic_url(t), t["short"], len(t["papers"]) or "") for t in TOPICS)
     topics_block = f'<p class="grp">Research topics</p><ul class="toc">{topics_li}</ul>' if TOPICS else ""
@@ -372,7 +375,7 @@ def main():
     body = f"""<h1>{e(CFG['name'])}</h1><p class="muted">{e(CFG['job_title'])} · {e(CFG['affiliation'])} · {e(CFG['city'])}</p>
 {chr(10).join(f'<p>{e(x)}</p>' for x in CFG.get('bio_long') or [CFG['bio']])}
 <p class="meta">Research interests: {e(', '.join(CFG['interests']))}</p>
-<p class="meta">{' · '.join(f'<a href="{e(u)}">{n}</a>' for n, u in [("Google Scholar", CFG['google_scholar']), ("RePEc", CFG['repec']), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG['orcid'] else ""), ("University profile", CFG['university_profile'])] if u)}</p>
+<p class="meta">{' · '.join(f'<a href="{e(u)}">{n}</a>' for n, u in profile_links())}</p>
 {topics_html}
 <p class="meta" id="publications">{len(pubs)} publications · {n_oa} with free full text on this site</p>{pub_html}
 <h2 id="projects">Research projects</h2>{proj_html}
