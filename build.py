@@ -35,7 +35,7 @@ split = lambda v: [x.strip() for x in (v or "").split(";") if x.strip()]
 _pf = files("profile.md")
 if not _pf: sys.exit("BŁĄD: brak pliku profile.md")
 _m, _bio = read_md(_pf[0])
-CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "ssrn", "researchgate", "linkedin", "website", "google_site_verification", "indexnow_key"]}
+CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "ssrn", "researchgate", "linkedin", "goatcounter", "website", "google_site_verification", "indexnow_key"]}
 CFG["orcid"] = CFG["orcid"].replace("https://orcid.org/", "").strip("/")
 CFG["interests"] = split(_m.get("interests"))
 CFG["bio_long"] = _bio
@@ -207,6 +207,9 @@ def page(title, desc, body, path, head_extra="", jsonld=None):
     SIDEBAR_ = SIDEBAR
     canon = f"{BASE}/{path}"
     verif = f'<meta name="google-site-verification" content="{e(CFG["google_site_verification"])}">' if (CFG.get("google_site_verification") and path == "") else ""
+    gc = CFG.get("goatcounter") or ""
+    counter = (f'<script data-goatcounter="https://{e(gc)}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>'
+               if re.fullmatch(r"[a-z0-9-]{2,50}", gc) else "")
     ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>' if jsonld else ""
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -214,7 +217,7 @@ def page(title, desc, body, path, head_extra="", jsonld=None):
 <link rel="canonical" href="{e(canon)}"><meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{e(canon)}"><meta property="og:type" content="website">
 <link rel="alternate" type="text/plain" href="{BASE}/llms.txt" title="LLM-readable summary">
-{head_extra}{verif}<link rel="stylesheet" href="{BASE}/style.css">{ld}</head><body>
+{head_extra}{verif}<link rel="stylesheet" href="{BASE}/style.css">{ld}{counter}</head><body>
 <div class="wrap"><aside>{SIDEBAR_}</aside>
 <main>{body}</main></div>
 <footer>{e(CFG['name'])} · {e(CFG['affiliation'])} · Last updated {TODAY}</footer></body></html>"""
