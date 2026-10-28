@@ -11,6 +11,7 @@ repec: https://ideas.repec.org/f/pbe727.html
 university_profile: https://ue.poznan.pl/osoby/prof-dr-hab-barbara-bedowska-sojka/
 interests: financial econometrics; financial markets; cryptocurrency markets; critical metal markets; liquidity; volatility; high-frequency data; hedging and safe-haven assets; machine learning in finance; network science; bank, fintech; time series modelling
 website: https://barbbs.github.io
+indexnow_key: 5c351aa0d0674112fc79d9a2d6f72ea1
 google_site_verification: yis2MH62jGd7Zl9i-4KODl6TkSJf8UZBxgBVHOaX-CM
 ---
 
