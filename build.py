@@ -105,6 +105,38 @@ for f in files("talk-*.md"):
     TALKS.append(dict(id=f.stem[5:], title=m["title"], conference=m["conference"], location=m.get("location", ""), date=date,
                       url=m.get("url", ""), slides=slides, slides_src=slides_src, publication=pub, coauthors=m.get("coauthors", ""), description=" ".join(desc)))
 TALKS.sort(key=lambda t: t["date"], reverse=True)
+# --- strony tematyczne
+TOPICS = []
+TALK_IDS = {t["id"] for t in TALKS}
+for f in files("topic-*.md"):
+    if "TEMPLATE" in f.stem.upper(): continue
+    m, body = read_md(f)
+    if not m.get("title"): sys.exit(f"BŁĄD w pliku {f.name}: brak tytułu (title)")
+    papers = []
+    for x in split(m.get("papers")):
+        if x in PUB_IDS: papers.append(x)
+        else: print(f"UWAGA: {f.name}: brak pracy {x!r} (pliku pub-{x}.md) – pominięta")
+    talks = []
+    for x in split(m.get("talks")):
+        if x in TALK_IDS: talks.append(x)
+        else: print(f"UWAGA: {f.name}: brak wystąpienia {x!r} (pliku talk-{x}.md) – pominięte")
+    links = []
+    for x in split(m.get("links")):
+        if "|" in x:
+            lab, url = [y.strip() for y in x.split("|", 1)]; links.append((lab, url))
+        else: print(f"UWAGA: {f.name}: link {x!r} bez znaku | (format: Opis | adres) – pominięty")
+    body = [x for x in body if not x.upper().startswith("TODO")]
+    body = [x for i, x in enumerate(body) if not (x.startswith("## ") and (i + 1 == len(body) or body[i + 1].startswith("## ")))]
+    TOPICS.append(dict(id=f.stem[6:], title=m["title"], short=m.get("short") or m["title"], summary=m.get("summary", ""),
+                       order=float(m.get("order") or 99), papers=papers, talks=talks, links=links, body=body))
+TOPICS.sort(key=lambda t: (t["order"], t["title"]))
+def topic_url(t): return f"{BASE}/topic-{t['id']}.html"
+def plural(n, w): return f"{n} {w}" + ("" if n == 1 else "s")
+def n_items(t):
+    nt = len(set(t["talks"]) | {x["id"] for x in TALKS if x["publication"] in t["papers"]})
+    return " · ".join(x for x in [plural(len(t["papers"]), "publication") if t["papers"] else "", plural(nt, "conference talk") if nt else ""] if x)
+def topics_of(pid): return [t for t in TOPICS if pid in t["papers"]]
+
 MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 def nice_date(d):
     parts = d.split("-")
@@ -203,7 +235,10 @@ def make_sidebar(pubs, by_proj):
     sub = "".join(li(proj_url(k), pr["name"].replace("NCN ", "NCN ").replace("COST Action CA19130 FinAI", "COST FinAI").replace("MSCA Doctoral Network DIGITAL", "MSCA DIGITAL").replace("Regionalna Inicjatywa Doskonałości (MNiSW)", "RID (MNiSW)"), len(by_proj[k])) for k, pr in projs)
     links = [("Google Scholar", CFG["google_scholar"]), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG["orcid"] else ""), ("RePEc", CFG["repec"]), ("University profile", CFG["university_profile"]), ("BibTeX", f"{BASE}/publications.bib")]
     ext = "".join(li(e(u), n) for n, u in links if u)
+    topics_li = "".join(li(topic_url(t), t["short"], len(t["papers"]) or "") for t in TOPICS)
+    topics_block = f'<p class="grp">Research topics</p><ul class="toc">{topics_li}</ul>' if TOPICS else ""
     return (f'<a class="who" href="{BASE}/">{e(CFG["name"])}</a><nav aria-label="Contents">'
+            f'{topics_block}'
             f'<p class="grp">Publications</p><ul class="toc">{pubs_li}'
             f'{li(f"{BASE}/#projects", "Research projects", len(projs))}</ul><ul class="sub">{sub}</ul>'
             f'<ul class="toc">{li(f"{BASE}/#working-papers", "Working papers", cnt["working-papers"])}'
@@ -267,6 +302,7 @@ def build_pub(p):
 <div class="box">{f'<p><a href="{pdf_url(p)}"><strong>Download PDF</strong></a> — {FULLTEXT_OK[p["share"]]}</p>' if pdf else '<p>Full text: see the publisher version via DOI.</p>'}
 {f'<p class="meta">{e(notice(p))}</p>' if pdf and notice(p) else ''}
 {f'<p class="meta">Preprint: <a href="{e(p["ssrn"])}">{e(p["ssrn"])}</a></p>' if p['ssrn'] else ''}</div>
+{('<p class="meta">Research topics: ' + ' · '.join(f'<a href="{topic_url(t)}">{e(t["title"])}</a>' for t in topics_of(p['id'])) + '</p>') if topics_of(p['id']) else ''}
 {('<h2>Funding</h2><ul class="plain">' + ''.join(f'<li><a href="{proj_url(k)}">{e(PROJ[k]["name"])}</a>, {e(PROJ[k]["funder"])}, grant {e(PROJ[k]["number"])}</li>' for k in p['projects']) + '</ul>') if p['projects'] else ''}
 {('<h2>Presented at</h2>' + ''.join(talk_item(t, False) for t in TALKS if t['publication'] == p['id'])) if any(t['publication'] == p['id'] for t in TALKS) else ''}
 <h2>Cite</h2><pre style="white-space:pre-wrap;font-size:13px">{e(bibtex(p))}</pre>"""
@@ -306,6 +342,28 @@ def main():
         f'<div class="pub"><h3><a href="{proj_url(k)}">{e(pr["title"] if not pr["title"].startswith("[") else pr["name"])}</a></h3>'
         f'<p class="meta">{e(pr["name"])} · {e(pr["number"])} · {len(by_proj[k])} publications</p></div>'
         for k, pr in PROJ.items() if by_proj[k])
+    pub_by_id = {p["id"]: p for p in pubs}
+    talk_by_id = {t["id"]: t for t in TALKS}
+    for tp in TOPICS:
+        tp_pubs = sorted((pub_by_id[x] for x in tp["papers"]), key=lambda p: (-p["year"], p["title"]))
+        tp_talks = [talk_by_id[x] for x in tp["talks"]] + [t for t in TALKS if t["publication"] in tp["papers"] and t["id"] not in tp["talks"]]
+        tp_talks.sort(key=lambda t: t["date"], reverse=True)
+        def para(x):
+            return f'<h2>{e(x[3:])}</h2>' if x.startswith("## ") else f'<p>{e(x)}</p>'
+        body_t = (f'<p class="muted">Research topic</p><h1>{e(tp["title"])}</h1>'
+                  + "".join(para(x) for x in tp["body"])
+                  + (('<h2>Data and code</h2><ul class="plain">' + "".join(f'<li><a href="{e(u)}">{e(l)}</a></li>' for l, u in tp["links"]) + '</ul>') if tp["links"] else "")
+                  + (f'<h2>Publications ({len(tp_pubs)})</h2>' + "".join(pub_item(p) for p in tp_pubs) if tp_pubs else "")
+                  + (f'<h2>Conference talks ({len(tp_talks)})</h2>' + "".join(talk_item(t) for t in tp_talks) if tp_talks else ""))
+        ld_t = {"@context": "https://schema.org", "@type": "CollectionPage", "@id": topic_url(tp), "name": tp["title"],
+                "description": tp["summary"] or tp["title"], "about": tp["title"], "author": {"@id": f"{BASE}/#person"},
+                "hasPart": [{"@id": pub_url(p)} for p in tp_pubs], "isPartOf": {"@id": f"{BASE}/"}}
+        desc_t = tp["summary"] or (tp["body"][0] if tp["body"] else tp["title"])
+        (OUT/f"topic-{tp['id']}.html").write_text(page(f"{tp['title']} | {CFG['name']}", desc_t[:155], body_t, f"topic-{tp['id']}.html", jsonld=ld_t), encoding="utf-8")
+    topics_html = ('<h2 id="topics">Research topics</h2>' + "".join(
+        f'<div class="pub"><h3><a href="{topic_url(t)}">{e(t["title"])}</a></h3>'
+        + (f'<p>{e(t["summary"])}</p>' if t["summary"] else "")
+        + f'<p class="meta">{n_items(t)}</p></div>' for t in TOPICS)) if TOPICS else ""
     sections = [(t, ts) for _, t, ts in SECTIONS]
     sec = lambda sid, t, ts: f'<h2 id="{sid}">{t}</h2>' + "".join(pub_item(p) for p in pubs if p["type"] in ts)
     pub_html = "".join(sec(*x) for x in SECTIONS if x[0] != "working-papers")
@@ -315,6 +373,7 @@ def main():
 {chr(10).join(f'<p>{e(x)}</p>' for x in CFG.get('bio_long') or [CFG['bio']])}
 <p class="meta">Research interests: {e(', '.join(CFG['interests']))}</p>
 <p class="meta">{' · '.join(f'<a href="{e(u)}">{n}</a>' for n, u in [("Google Scholar", CFG['google_scholar']), ("RePEc", CFG['repec']), ("ORCID", f"https://orcid.org/{CFG['orcid']}" if CFG['orcid'] else ""), ("University profile", CFG['university_profile'])] if u)}</p>
+{topics_html}
 <p class="meta" id="publications">{len(pubs)} publications · {n_oa} with free full text on this site</p>{pub_html}
 <h2 id="projects">Research projects</h2>{proj_html}
 {wp_html}
@@ -328,13 +387,16 @@ def main():
     (OUT/"index.html").write_text(page(f"{CFG['name']} — Publications and research projects", CFG["bio"][:155], body, "", jsonld=ld), encoding="utf-8")
     # BibTeX, sitemap, robots, llms.txt
     (OUT/"publications.bib").write_text("\n\n".join(bibtex(p) for p in pubs), encoding="utf-8")
-    urls = [f"{BASE}/"] + [pub_url(p) for p in pubs] + [proj_url(k) for k in PROJ if by_proj[k]]
+    urls = [f"{BASE}/"] + [pub_url(p) for p in pubs] + [proj_url(k) for k in PROJ if by_proj[k]] + [topic_url(t) for t in TOPICS]
     (OUT/"sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "\n".join(f"<url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>" for u in urls) + "\n</urlset>\n", encoding="utf-8")
     (OUT/"robots.txt").write_text("User-agent: *\nAllow: /\n\n# AI crawlers explicitly welcome\nUser-agent: GPTBot\nAllow: /\nUser-agent: ClaudeBot\nAllow: /\nUser-agent: PerplexityBot\nAllow: /\nUser-agent: Google-Extended\nAllow: /\nUser-agent: CCBot\nAllow: /\n\n"
                                   f"Sitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
     llms = [f"# {CFG['name']}", "", f"> {CFG['bio']}", "", f"- Affiliation: {CFG['department']}, {CFG['affiliation']}, {CFG['city']}",
-            f"- Research interests: {', '.join(CFG['interests'])}", f"- Google Scholar: {CFG['google_scholar']}", "", "## Research projects", ""]
+            f"- Research interests: {', '.join(CFG['interests'])}", f"- Google Scholar: {CFG['google_scholar']}", ""]
+    if TOPICS:
+        llms += ["## Research topics", ""] + [f"- [{t['title']}]({topic_url(t)}): {t['summary'] or ''} ({n_items(t)})".replace(":  (", " (") for t in TOPICS] + [""]
+    llms += ["## Research projects", ""]
     for k, pr in PROJ.items():
         if by_proj[k]: llms.append(f"- [{pr['name']} ({pr['number']})]({proj_url(k)}): {len(by_proj[k])} publications, funder: {pr['funder']}")
     for t, ts in sections:
