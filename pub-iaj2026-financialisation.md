@@ -2,6 +2,7 @@
 title: "Tracing financialisation in critical metal markets: Correlations, bubbles, and dynamic linkages"
 authors: Będowska-Sójka, B., Kasperek, M.
 year: 2026
+date: 2026-10-28
 type: article
 venue: Investment Analysts Journal
 volume_pages: 1–22
