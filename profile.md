@@ -16,6 +16,7 @@ google_site_verification: yis2MH62jGd7Zl9i-4KODl6TkSJf8UZBxgBVHOaX-CM
 ssrn: https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=…
 researchgate: https://www.researchgate.net/profile/Barbara-Bedowska-Sojka
 linkedin: https://www.linkedin.com/in/basia-bedowska-sojka-67895059/
+goatcounter: barbbs
 ---
 
 Barbara Będowska-Sójka focuses on cryptocurrency and critical metal markets. She examines volatility and liquidity measures built from high-frequency data, the coherence of liquidity proxies and the dependencies between volatility and liquidity. Related strands cover the hedging and safe-haven properties of assets under geopolitical and energy shocks, and machine-learning methods in asset pricing.
