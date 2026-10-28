@@ -8,6 +8,7 @@ import json, html, re, shutil, datetime, pathlib, sys
 ROOT = pathlib.Path(__file__).parent
 OUT = ROOT/"_site"
 TODAY = datetime.date.today().isoformat()
+NOW = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat()
 e = lambda s: html.escape(str(s or ""), quote=True)
 SKIP = {".git", "_site", ".github"}
 
@@ -384,7 +385,7 @@ def main():
 <h2 id="projects">Research projects</h2>{proj_html}
 {wp_html}
 {('<h2 id="talks">Conference talks</h2>' + ''.join(talk_item(t) for t in TALKS)) if TALKS else ''}"""
-    ld = {"@context": "https://schema.org", "@graph": [person_ld(), {"@type": "ProfilePage", "@id": f"{BASE}/", "mainEntity": {"@id": f"{BASE}/#person"}, "dateModified": TODAY}]}
+    ld = {"@context": "https://schema.org", "@graph": [person_ld(), {"@type": "ProfilePage", "@id": f"{BASE}/", "mainEntity": {"@id": f"{BASE}/#person"}, "dateModified": NOW}]}
     for t in TALKS:
         if t["slides_src"]: shutil.copy(t["slides_src"], OUT/t["slides"])
     if re.fullmatch(r"[A-Za-z0-9-]{8,128}", CFG.get("indexnow_key") or ""):
