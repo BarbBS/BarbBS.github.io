@@ -13,6 +13,9 @@ interests: financial econometrics; financial markets; cryptocurrency markets; cr
 website: https://barbbs.github.io
 indexnow_key: 5c351aa0d0674112fc79d9a2d6f72ea1
 google_site_verification: yis2MH62jGd7Zl9i-4KODl6TkSJf8UZBxgBVHOaX-CM
+ssrn: https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=…
+researchgate: https://www.researchgate.net/profile/Barbara-Bedowska-Sojka
+linkedin: https://www.linkedin.com/in/basia-bedowska-sojka-67895059/
 ---
 
 Barbara Będowska-Sójka focuses on cryptocurrency and critical metal markets. She examines volatility and liquidity measures built from high-frequency data, the coherence of liquidity proxies and the dependencies between volatility and liquidity. Related strands cover the hedging and safe-haven properties of assets under geopolitical and energy shocks, and machine-learning methods in asset pricing.
