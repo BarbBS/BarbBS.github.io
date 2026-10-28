@@ -3,7 +3,7 @@ title: Gender and networks in academic publishing
 short: Gender in academia
 order: 7
 summary: The gender composition and network structure of editorial boards of finance journals.
-papers: jbe2025-editorialboards; sis2025-gendergap; wp-editorialconnectedness
+papers: jbe2025-editorialboards; sis2025-gendergap
 talks:
 links:
 ---
