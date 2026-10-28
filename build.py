@@ -35,7 +35,7 @@ split = lambda v: [x.strip() for x in (v or "").split(";") if x.strip()]
 _pf = files("profile.md")
 if not _pf: sys.exit("BŁĄD: brak pliku profile.md")
 _m, _bio = read_md(_pf[0])
-CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "website", "google_site_verification"]}
+CFG = {k: _m.get(k, "") for k in ["name", "job_title", "affiliation", "department", "city", "email", "orcid", "google_scholar", "repec", "university_profile", "website", "google_site_verification", "indexnow_key"]}
 CFG["orcid"] = CFG["orcid"].replace("https://orcid.org/", "").strip("/")
 CFG["interests"] = split(_m.get("interests"))
 CFG["bio_long"] = _bio
@@ -322,6 +322,8 @@ def main():
     ld = {"@context": "https://schema.org", "@graph": [person_ld(), {"@type": "ProfilePage", "@id": f"{BASE}/", "mainEntity": {"@id": f"{BASE}/#person"}, "dateModified": TODAY}]}
     for t in TALKS:
         if t["slides_src"]: shutil.copy(t["slides_src"], OUT/t["slides"])
+    if re.fullmatch(r"[A-Za-z0-9-]{8,128}", CFG.get("indexnow_key") or ""):
+        (OUT/f"{CFG['indexnow_key']}.txt").write_text(CFG["indexnow_key"], encoding="utf-8")
     (OUT/"style.css").write_text(css().strip() + "\n", encoding="utf-8")
     (OUT/"index.html").write_text(page(f"{CFG['name']} — Publications and research projects", CFG["bio"][:155], body, "", jsonld=ld), encoding="utf-8")
     # BibTeX, sitemap, robots, llms.txt
