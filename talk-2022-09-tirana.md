@@ -5,7 +5,7 @@ location: University of Tirana, Albania
 date: 2022-09-21
 url: 
 slides: 
-publication: wp-editorialconnectedness
+publication: jbe2025-editorialboards
 coauthors: 
 ---
 
