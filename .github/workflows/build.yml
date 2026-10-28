@@ -29,3 +29,25 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+      - name: Notify Bing and other search engines (IndexNow)
+        continue-on-error: true
+        run: |
+          python3 - <<'PY'
+          import json, re, time, urllib.request
+          prof = open("profile.md", encoding="utf-8").read()
+          key = re.search(r"^indexnow_key:\s*(\S+)", prof, re.M)
+          site = re.search(r"^website:\s*(\S+)", prof, re.M)
+          if not key or not site:
+              raise SystemExit("No indexnow_key or website in profile.md - skipping")
+          key, site = key.group(1), site.group(1).rstrip("/")
+          time.sleep(30)
+          sitemap = urllib.request.urlopen(site + "/sitemap.xml").read().decode()
+          urls = re.findall(r"<loc>(.*?)</loc>", sitemap)
+          body = json.dumps({"host": site.split("//")[1], "key": key,
+                             "keyLocation": f"{site}/{key}.txt", "urlList": urls}).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body,
+                                       headers={"Content-Type": "application/json; charset=utf-8"})
+          with urllib.request.urlopen(req) as r:
+              print("IndexNow:", r.status, "-", len(urls), "URLs submitted")
+          PY
