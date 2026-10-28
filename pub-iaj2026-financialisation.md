@@ -13,3 +13,5 @@ preprint:
 keywords: financialisation; critical metals; speculative bubbles; GSADF; DCC-GARCH; correlation networks; lithium; cobalt; copper; nickel
 ---
 
+The shift toward a net-zero economy has intensified demand for copper, cobalt, lithium and nickel. This paper tests four hypotheses on their financialisation across sixteen price series, from July 2021 to July 2025. We find no significant association between bubble intensity and series-level illiquidity. Cointegration does not track market maturity: copper, the most established market, converges least, while lithium converges most despite the highest bubble intensity. Short-run co-movement separates lithium and cobalt from copper and nickel, and once speculative episodes are filtered out, price discovery rests with Chinese exchanges in every metal where a leader can be identified. Financialisation is therefore uneven and multidimensional: the reliability of a price benchmark depends more on its source than on the metal it tracks.
+
